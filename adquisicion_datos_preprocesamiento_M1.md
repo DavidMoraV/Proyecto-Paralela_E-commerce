@@ -38,6 +38,7 @@ Se comparó el tiempo de carga y limpieza de `events.csv` completo (2,755,641 fi
 | Pandas (baseline secuencial) | 4.90 | 129.5 | 1.00x |
 | **Polars** | **1.62** | 454.3 | **3.02x** |
 | Dask (4 particiones) | 4.01 | 102.3 | 1.22x |
+
 <img width="1715" height="558" alt="image" src="https://github.com/user-attachments/assets/6be26e53-eb17-40e4-8fd8-21cc0c7b9749" />
 
 
