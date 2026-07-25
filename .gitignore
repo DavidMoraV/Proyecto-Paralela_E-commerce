@@ -1,5 +1,6 @@
 # Entornos virtuales
 venv/
+venv312/
 env/
 .venv/
 
@@ -25,3 +26,6 @@ resultados/*.png
 # Sistema
 .DS_Store
 .idea/
+
+resultados/modelos/*.npz
+resultados/modelos/*.pt
