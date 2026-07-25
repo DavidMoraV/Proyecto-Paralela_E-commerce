@@ -1,0 +1,27 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Datos
+data/raw/*.csv
+data/processed/
+!data/raw/.gitkeep
+
+# Resultados generados
+resultados/*.csv
+resultados/*.png
+
+# Modelos entrenados
+*.pt
+*.pth
+*.onnx
+
+# Sistema
+.DS_Store
+.idea/
