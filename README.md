@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # M1 Pipeline de Datos (Entregable 2)
 
 Módulo de Ingeniería de Datos del Sistema de Recomendación Paralelo para E-Commerce.
@@ -68,7 +67,7 @@ ningún punto intermedio, y verificar con un editor de texto plano (no Excel)
 que el separador sea `,` y el timestamp un entero completo antes de
 reprocesar.
 
-# M3 — Modelo de Machine Learning y Recomendación
+#  Modelo de Machine Learning y Recomendación
 
 Módulo de ML del Sistema de Recomendación Paralelo para E-Commerce.
 Responsable: Siloé Campos
@@ -147,8 +146,7 @@ Ver sección "Gestión de problemas" del informe IEEE para el detalle completo. 
 =======
 # Sistema de Recomendación Paralelo para E-Commerce
 
-Proyecto del curso **Computación Paralela y Distribuida** — LEAD University
-Prof. Johansell Villalobos Cubillo
+Proyecto del curso **Computación Paralela y Distribuida** 
 
 Sistema de recomendación de productos construido sobre el dataset [RetailRocket](https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset) (2,755,641 eventos, 1,407,580 usuarios), con énfasis en demostrar y medir el uso de computación paralela y distribuida en cada etapa del pipeline: ingesta, EDA, modelado y análisis de rendimiento.
 
@@ -268,4 +266,4 @@ Polars · Dask · PyArrow · Scikit-Learn · Implicit (ALS) · SciPy · Dash / P
 - [`Generales/modelado_M3.md`](Generales/modelado_M3.md) — detalle del modelo de recomendación
 - [`Generales/analisis_rendimiento_M4.md`](Generales/analisis_rendimiento_M4.md) — metodología y hallazgos de rendimiento
 - [`Generales/gestion_de_problemas_M5.md`](Generales/gestion_de_problemas_M5.md) — problemas de integración del dashboard
->>>>>>> 36c5def (Entrega 2: pipeline completo M1-M5 con validacion y documentacion)
+
