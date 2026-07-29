@@ -1,0 +1,4 @@
+herramienta,tiempo_segundos,memoria_pico_mb,filas,speedup_vs_pandas
+Pandas,2.776,140.58,2755641,1.0
+Polars,1.3494,616.56,2755641,2.06
+Dask (4 particiones),2.967,212.89,2755641,0.94

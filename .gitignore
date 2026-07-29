@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Entornos virtuales
 venv/
 venv312/
@@ -29,3 +30,33 @@ resultados/*.png
 
 resultados/modelos/*.npz
 resultados/modelos/*.pt
+=======
+# Datos crudos de RetailRocket (Kaggle) — no se redistribuyen, se descargan aparte
+Datasets/
+
+# Backups pesados de CSV/XLSX originales
+Generales/zip/
+
+# Salidas generadas del pipeline (se regeneran corriendo notebooks/PipelineM1.ipynb y M2)
+Codigos/datos/
+
+# Dashboard HTML generado (se regenera con generar_dashboard_html.py)
+Codigos/dashboard/dashboard.html
+
+# Cache de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Checkpoints de Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Entorno virtual (si se usa)
+venv/
+.venv/
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+>>>>>>> 36c5def (Entrega 2: pipeline completo M1-M5 con validacion y documentacion)

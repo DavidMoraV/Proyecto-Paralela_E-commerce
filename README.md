@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # M1 Pipeline de Datos (Entregable 2)
 
 Módulo de Ingeniería de Datos del Sistema de Recomendación Paralelo para E-Commerce.
@@ -143,3 +144,128 @@ Ver sección "Gestión de problemas" del informe IEEE para el detalle completo. 
 3. `OPENBLAS_NUM_THREADS=1` es obligatorio antes de entrenar con `implicit` — sin esto, el entrenamiento de ALS se degrada ~3.4x.
 4. El backend `mps` de PyTorch se cuelga silenciosamente en Mac Intel con capas `nn.Embedding` — el código fuerza CPU explícitamente.
 5. El dataset tiene cold-start severo (85.8% de usuarios con 1 sola interacción en train), lo cual limita el techo de ambos modelos y favorece a ALS sobre NCF en esta etapa de entrenamiento.
+=======
+# Sistema de Recomendación Paralelo para E-Commerce
+
+Proyecto del curso **Computación Paralela y Distribuida** — LEAD University
+Prof. Johansell Villalobos Cubillo
+
+Sistema de recomendación de productos construido sobre el dataset [RetailRocket](https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset) (2,755,641 eventos, 1,407,580 usuarios), con énfasis en demostrar y medir el uso de computación paralela y distribuida en cada etapa del pipeline: ingesta, EDA, modelado y análisis de rendimiento.
+
+**Entrega actual: Entrega 2 — Implementación Inicial y Validación Parcial.**
+El informe completo está en [`Generales/entregable 2_Sistema_de_Recomendación_Paralelo_para_E_Commerce.pdf`](<Generales/entregable%202_Sistema_de_Recomendación_Paralelo_para_E_Commerce.pdf>).
+
+## Equipo
+
+Ana María Ramírez (M2) · María José (M2) · Siloé Campos · Julio · David Mora (M1, M3, M4, M5)
+
+## Arquitectura
+
+```
+Datos crudos (RetailRocket)
+        │
+        ▼
+  M1 · ETL (Polars + Dask)              → datos/*.parquet
+        │
+        ▼
+  M2 · EDA y segmentación (K-Means)     → datos/user_segments.parquet
+        │
+        ▼
+  M3 · Modelo de recomendación (ALS)    → resultados/recomendaciones_muestra.csv
+        │
+        ├──► M4 · Análisis de rendimiento (speedup, Amdahl, profiling)
+        │
+        ▼
+  M5 · Dashboard (Dash / HTML estático)
+```
+
+## Resultados clave (dataset completo)
+
+| Métrica | Valor |
+|---|---|
+| Eventos procesados | 2,755,641 |
+| Usuarios únicos | 1,407,580 |
+| Speedup ETL (Polars vs Pandas) | 3.02× |
+| Hit Rate@10 del modelo | 0.0266 |
+| Speedup máx. entrenamiento (ALS) | 1.09× (fracción secuencial 89.2%, Ley de Amdahl) |
+
+Detalle completo de metodología, benchmarks y hallazgos en el informe PDF.
+
+## Estructura del repositorio
+
+```
+.
+├── Datasets/                  # Datos crudos de RetailRocket (NO incluido — ver "Cómo obtener los datos")
+├── Generales/                 # Documentos del curso e informes del equipo
+│   └── entregable 2_...pdf    # Informe IEEE completo de la Entrega 2
+└── Codigos/
+    ├── src/                   # Módulos Python reutilizables
+    │   ├── pipeline_datos.py       # M1 — ingesta, limpieza, transformación, exportación
+    │   ├── analisis_eda.py         # M2 — features de usuario, clustering
+    │   ├── modelo_recomendacion.py # M3 — matriz de interacciones, ALS, evaluación
+    │   └── benchmarks.py           # M4 — speedup, Amdahl, profiling
+    ├── notebooks/             # Un notebook por módulo, ejecutables de punta a punta
+    │   ├── PipelineM1.ipynb
+    │   ├── M2_Analisis_EDA.ipynb
+    │   ├── M3_Modelo_Recomendacion.ipynb
+    │   └── M4_Analisis_Rendimiento.ipynb
+    ├── dashboard/
+    │   ├── app.py                     # Dashboard interactivo (Dash)
+    │   └── generar_dashboard_html.py  # Dashboard estático (HTML autocontenido)
+    ├── datos/                 # Parquet procesados (NO incluido — se regenera con M1/M2)
+    ├── resultados/             # CSV/PNG de benchmarks y métricas (SÍ incluido, es evidencia)
+    ├── Makefile
+    └── requirements.txt
+```
+
+## Cómo obtener los datos
+
+El dataset no se incluye en el repositorio (ver `.gitignore`). Para reproducir el proyecto:
+
+1. Descarga el dataset desde [Kaggle — RetailRocket E-commerce Dataset](https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset).
+2. Coloca los 4 archivos (`events.csv`, `category_tree.csv`, `item_properties_part1.csv`/`.xlsx`, `item_properties_part2.csv`/`.xlsx`) dentro de `Datasets/`.
+
+> **Nota:** el pipeline detecta y corrige automáticamente archivos que hayan pasado por Excel (separador `;`, decimales con `,`, timestamps en notación científica) — ver "Gestión de problemas" en el informe para el detalle de este caso real encontrado durante el desarrollo.
+
+## Instalación y ejecución
+
+```bash
+pip install -r Codigos/requirements.txt
+```
+
+Ejecutar en orden (cada notebook alimenta al siguiente):
+
+```bash
+cd Codigos
+jupyter nbconvert --to notebook --execute --inplace notebooks/PipelineM1.ipynb
+jupyter nbconvert --to notebook --execute --inplace notebooks/M2_Analisis_EDA.ipynb
+jupyter nbconvert --to notebook --execute --inplace notebooks/M3_Modelo_Recomendacion.ipynb
+jupyter nbconvert --to notebook --execute --inplace notebooks/M4_Analisis_Rendimiento.ipynb
+```
+
+O con el `Makefile` (Linux/Mac/Git Bash; en Windows sin `make`, correr los comandos de arriba manualmente):
+
+```bash
+make all
+```
+
+### Dashboard
+
+```bash
+cd Codigos/dashboard
+python app.py                      # interactivo, http://127.0.0.1:8050
+# o
+python generar_dashboard_html.py   # genera dashboard.html, sin servidor
+```
+
+## Herramientas principales
+
+Polars · Dask · PyArrow · Scikit-Learn · Implicit (ALS) · SciPy · Dash / Plotly · cProfile · threadpoolctl
+
+## Documentación adicional
+
+- [`Generales/entrega_M3_para_M4.md`](Generales/entrega_M3_para_M4.md) — insumos de M3 para el análisis de rendimiento de M4
+- [`Generales/modelado_M3.md`](Generales/modelado_M3.md) — detalle del modelo de recomendación
+- [`Generales/analisis_rendimiento_M4.md`](Generales/analisis_rendimiento_M4.md) — metodología y hallazgos de rendimiento
+- [`Generales/gestion_de_problemas_M5.md`](Generales/gestion_de_problemas_M5.md) — problemas de integración del dashboard
+>>>>>>> 36c5def (Entrega 2: pipeline completo M1-M5 con validacion y documentacion)

@@ -1,0 +1,4 @@
+etapa,tiempo_secuencial_s,mejor_tiempo_s,mejor_configuracion,speedup_maximo
+ETL (M1),5.3655,2.829,8 workers,1.897
+Clustering (M2),11.0665,7.3131,8 hilos,1.513
+Entrenamiento ALS (M3),106.9117,97.9338,8 hilos BLAS,1.092

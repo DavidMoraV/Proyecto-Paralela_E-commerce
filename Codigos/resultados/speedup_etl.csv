@@ -1,0 +1,5 @@
+etiqueta,media_s,std_s,min_s,max_s,n_repeticiones,workers,particiones,speedup,eficiencia
+"ETL Dask (1 workers, 5 particiones)",5.3655,1.2253,4.2982,6.7036,3,1,5,1.0,1.0
+"ETL Dask (2 workers, 5 particiones)",4.7104,0.1042,4.6038,4.812,3,2,5,1.139,0.57
+"ETL Dask (4 workers, 5 particiones)",4.1887,0.2325,3.9316,4.3841,3,4,5,1.281,0.32
+"ETL Dask (8 workers, 5 particiones)",2.829,0.4765,2.4398,3.3605,3,8,5,1.897,0.237

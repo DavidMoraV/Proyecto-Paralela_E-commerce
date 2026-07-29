@@ -1,0 +1,5 @@
+etiqueta,media_s,std_s,min_s,max_s,n_repeticiones,workers,speedup,eficiencia
+K-Means (1 hilos),11.0665,0.2847,10.7504,11.3028,3,1,1.0,1.0
+K-Means (2 hilos),8.3738,0.1328,8.2709,8.5238,3,2,1.322,0.661
+K-Means (4 hilos),7.8759,0.132,7.7429,8.0068,3,4,1.405,0.351
+K-Means (8 hilos),7.3131,0.0675,7.2401,7.3733,3,8,1.513,0.189

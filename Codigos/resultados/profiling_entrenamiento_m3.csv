@@ -1,0 +1,16 @@
+funcion,archivo,linea,llamadas,tiempo_propio_s,tiempo_acumulado_s
+select,selectors.py,310,119,0.0022,175.4303
+_select,selectors.py,304,119,0.0011,175.4277
+<built-in method select.select>,~,0,119,72.5147,175.3809
+_run_once,base_events.py,1980,119,0.0034,103.2285
+wait,threading.py,641,33,0.0004,25.2756
+wait,threading.py,327,32,0.0004,22.5432
+<method 'acquire' of '_thread.lock' objects>,~,0,152,22.5439,22.5431
+_run,events.py,87,117,2.6267,8.1872
+<method 'run' of '_contextvars.Context' objects>,~,0,117,0.0006,5.5553
+_run_callback,ioloop.py,750,67,5.4984,5.5292
+entrenar,modelo_recomendacion.py,144,1,0.0001,0.0987
+_check_factors,recommender_base.py,218,1,0.0807,0.0933
+_check_fit_errors,matrix_factorization_base.py,249,1,0.0,0.0933
+fit,als.py,98,1,0.0,0.0933
+update,std.py,1205,15,0.0006,0.0499
