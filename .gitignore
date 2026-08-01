@@ -60,3 +60,9 @@ venv/
 .DS_Store
 Thumbs.db
 >>>>>>> 36c5def (Entrega 2: pipeline completo M1-M5 con validacion y documentacion)
+# Modelos exportados (pesados) - agregar excepciones puntuales si se quieren versionar
+modelos/*.onnx
+modelos/*.pt
+modelos/*.pth
+# Carpeta de limpieza (duplicados movidos, no se suben)
+_duplicados_para_revisar/

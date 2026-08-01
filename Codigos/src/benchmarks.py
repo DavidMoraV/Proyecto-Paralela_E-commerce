@@ -194,6 +194,64 @@ def benchmark_etl_workers(
     return calcular_speedup_eficiencia(df, columna_workers="workers", columna_tiempo="media_s")
 
 
+def _crear_subconjunto_csv(ruta_eventos: Path, n_filas: int, destino: Path) -> Path:
+    """Escribe un subconjunto de las primeras n_filas de events.csv a un CSV
+    temporal, usado para las pruebas de escalabilidad débil.
+    """
+    import polars as pl
+
+    ruta_eventos = resolver_ruta(ruta_eventos)
+    sep = detectar_separador(ruta_eventos)
+    lf = pl.scan_csv(ruta_eventos, separator=sep).head(n_filas)
+    lf.collect().write_csv(destino)
+    return destino
+
+
+def benchmark_etl_escalabilidad_debil(
+    ruta_eventos: Path,
+    carpeta_temporal: Path,
+    filas_base: int = 300_000,
+    lista_workers: list[int] | None = None,
+    n_repeticiones: int = 3,
+    warm_up: int = 1,
+) -> pd.DataFrame:
+    """Escalabilidad DÉBIL: el tamaño del dataset crece proporcional al número
+    de workers (workers=1 -> filas_base filas, workers=8 -> 8*filas_base
+    filas), y se mide el tiempo de carga+limpieza para cada configuración.
+
+    En un sistema con escalabilidad débil ideal, el tiempo se mantiene
+    aproximadamente CONSTANTE al crecer datos y workers en la misma
+    proporción (a diferencia de la escalabilidad fuerte, donde el dataset
+    se mantiene fijo y se espera que el tiempo se reduzca).
+    """
+    lista_workers = lista_workers or [1, 2, 4, 8]
+    carpeta_temporal.mkdir(parents=True, exist_ok=True)
+    filas = []
+
+    for w in lista_workers:
+        n_filas = filas_base * w
+        ruta_subconjunto = carpeta_temporal / f"events_debil_{w}w.csv"
+        logger.info("Preparando subconjunto de %s filas para %d worker(s)", f"{n_filas:,}", w)
+        _crear_subconjunto_csv(ruta_eventos, n_filas, ruta_subconjunto)
+
+        resultado = medir_tiempo_repetido(
+            _cargar_y_limpiar_dask, ruta_subconjunto, w, "16MB",
+            etiqueta=f"Escalabilidad débil ({w} workers, {n_filas:,} filas)",
+            n_repeticiones=n_repeticiones, warm_up=warm_up,
+        )
+        fila = resultado.to_dict()
+        fila["workers"] = w
+        fila["filas"] = n_filas
+        filas.append(fila)
+
+        ruta_subconjunto.unlink(missing_ok=True)  # limpiar el CSV temporal
+
+    df = pd.DataFrame(filas)
+    tiempo_base = df.loc[df["workers"] == 1, "media_s"].iloc[0]
+    df["eficiencia_debil"] = (tiempo_base / df["media_s"]).round(3)
+    return df
+
+
 # ---------------------------------------------------------------------------
 # 2. Profiling del entrenamiento (identificación de cuellos de botella)
 # ---------------------------------------------------------------------------

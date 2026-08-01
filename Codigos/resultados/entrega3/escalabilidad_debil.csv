@@ -1,0 +1,5 @@
+etiqueta,media_s,std_s,min_s,max_s,n_repeticiones,workers,filas,eficiencia_debil
+"Escalabilidad débil (1 workers, 300,000 filas)",0.7175,0.0579,0.659,0.7747,3,1,300000,1.0
+"Escalabilidad débil (2 workers, 600,000 filas)",1.5691,0.1798,1.4272,1.7713,3,2,600000,0.457
+"Escalabilidad débil (4 workers, 1,200,000 filas)",2.1144,0.0476,2.0699,2.1645,3,4,1200000,0.339
+"Escalabilidad débil (8 workers, 2,400,000 filas)",2.9842,0.0793,2.8949,3.0467,3,8,2400000,0.24
