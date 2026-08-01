@@ -140,12 +140,28 @@ def entrenar_ncf(
 ) -> dict:
     """Entrena el modelo con Binary Cross-Entropy (clasificación positivo/
     negativo). Devuelve historial de pérdida y tiempo total de entrenamiento.
+
+    NOTA DE RENDIMIENTO: se indexa directamente sobre los tensores del
+    dataset (ya completos en memoria) en vez de usar `torch.utils.data.
+    DataLoader`. El DataLoader estándar llama a `__getitem__` muestra por
+    muestra en Python puro antes de armar cada lote — con datasets de
+    millones de muestras (como el de este proyecto, ~11.7M tras el muestreo
+    negativo), ese overhead de Python domina sobre el cómputo real en GPU.
+    Indexando tensores completos con `torch.randperm` se evita ese overhead
+    por completo, ya que el "shuffle" y el armado de lotes se hacen como
+    operaciones vectorizadas (en GPU, si el dataset se mueve ahí).
     """
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     logger.info("Entrenando NeuMF en dispositivo: %s", device)
     modelo.to(device)
 
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    # Mover el dataset completo al dispositivo una sola vez (evita transferencias
+    # CPU->GPU repetidas por lote).
+    usuarios = dataset.usuarios.to(device)
+    items = dataset.items.to(device)
+    labels = dataset.labels.to(device)
+    n_muestras = usuarios.shape[0]
+
     optimizador = torch.optim.Adam(modelo.parameters(), lr=lr)
     criterio = nn.BCELoss()
 
@@ -153,17 +169,21 @@ def entrenar_ncf(
     t0 = time.perf_counter()
     for epoca in range(epochs):
         modelo.train()
+        permutacion = torch.randperm(n_muestras, device=device)
         perdida_total = 0.0
-        for usuarios, items, labels in loader:
-            usuarios, items, labels = usuarios.to(device), items.to(device), labels.to(device)
+
+        for inicio in range(0, n_muestras, batch_size):
+            idx = permutacion[inicio: inicio + batch_size]
+            u_batch, i_batch, l_batch = usuarios[idx], items[idx], labels[idx]
+
             optimizador.zero_grad()
-            pred = modelo(usuarios, items)
-            perdida = criterio(pred, labels)
+            pred = modelo(u_batch, i_batch)
+            perdida = criterio(pred, l_batch)
             perdida.backward()
             optimizador.step()
-            perdida_total += perdida.item() * len(labels)
+            perdida_total += perdida.item() * len(idx)
 
-        perdida_promedio = perdida_total / len(dataset)
+        perdida_promedio = perdida_total / n_muestras
         historial.append(perdida_promedio)
         logger.info("Época %d/%d — BCE loss: %.4f", epoca + 1, epochs, perdida_promedio)
 
