@@ -170,7 +170,10 @@ def entrenar_ncf(
     for epoca in range(epochs):
         modelo.train()
         permutacion = torch.randperm(n_muestras, device=device)
-        perdida_total = 0.0
+        # Se acumula como tensor en GPU (sin .item()) para no forzar una
+        # sincronización GPU->CPU en cada uno de los ~miles de batches por
+        # época -- solo se sincroniza una vez al final de la época.
+        perdida_total = torch.zeros(1, device=device)
 
         for inicio in range(0, n_muestras, batch_size):
             idx = permutacion[inicio: inicio + batch_size]
@@ -181,9 +184,9 @@ def entrenar_ncf(
             perdida = criterio(pred, l_batch)
             perdida.backward()
             optimizador.step()
-            perdida_total += perdida.item() * len(idx)
+            perdida_total += perdida.detach() * len(idx)
 
-        perdida_promedio = perdida_total / n_muestras
+        perdida_promedio = (perdida_total / n_muestras).item()  # única sincronización de la época
         historial.append(perdida_promedio)
         logger.info("Época %d/%d — BCE loss: %.4f", epoca + 1, epochs, perdida_promedio)
 
