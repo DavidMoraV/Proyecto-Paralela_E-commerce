@@ -54,7 +54,7 @@ def segmentar_usuarios_gpu(
     features_log = usuarios_features.select(columnas).with_columns(
         [pl.col(c).log1p().alias(c) for c in columnas]
     )
-    df_gpu = cudf.DataFrame.from_pandas(features_log.to_pandas())
+    df_gpu = cudf.from_pandas(features_log.to_pandas())
     X_scaled = StandardScalerGPU().fit_transform(df_gpu)
 
     t0 = time.perf_counter()
@@ -146,7 +146,7 @@ def benchmark_kmeans_gpu_vs_cpu(
             tiempos_cpu.append(time.perf_counter() - t0)
 
         # --- GPU ---
-        df_gpu = cudf.DataFrame.from_pandas(df_pd)
+        df_gpu = cudf.from_pandas(df_pd)
         tiempos_gpu = []
         for _ in range(n_repeticiones):
             t0 = time.perf_counter()
@@ -188,7 +188,7 @@ def reducir_umap_gpu(usuarios_features: pl.DataFrame, columnas: list[str] | None
         df = df.sample(n=n_muestra, seed=semilla)
 
     features_log = df.select(columnas).with_columns([pl.col(c).log1p().alias(c) for c in columnas])
-    df_gpu = cudf.DataFrame.from_pandas(features_log.to_pandas())
+    df_gpu = cudf.from_pandas(features_log.to_pandas())
 
     logger.info("Corriendo UMAP (GPU) sobre %s puntos", f"{df.height:,}")
     embedding = UMAP(n_components=2, random_state=semilla).fit_transform(df_gpu)
