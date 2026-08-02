@@ -34,6 +34,11 @@ recomendaciones = pd.read_csv(CARPETA_RESULTADOS / "recomendaciones_muestra.csv"
 resumen_speedup = pd.read_csv(CARPETA_RESULTADOS / "resumen_speedup_por_etapa.csv")
 speedup_etl = pd.read_csv(CARPETA_RESULTADOS / "speedup_etl.csv")
 
+# La prueba de carga es de Entrega 3 -- se carga de forma tolerante, ya que
+# el dashboard debe poder abrir aunque todavia no se haya corrido.
+RUTA_PRUEBA_CARGA = CARPETA_RESULTADOS / "entrega3" / "prueba_carga.csv"
+prueba_carga_df = pd.read_csv(RUTA_PRUEBA_CARGA) if RUTA_PRUEBA_CARGA.exists() else None
+
 NOMBRES_CLUSTER = {
     0: "Cluster 0 — Bajo/moderado",
     1: "Cluster 1 — Ocasional (1 interacción)",
@@ -111,6 +116,7 @@ app.layout = html.Div([
         dcc.Tab(label="Interacciones y productos (M1)", value="tab-interacciones"),
         dcc.Tab(label="Recomendaciones (M3)", value="tab-recomendaciones"),
         dcc.Tab(label="Rendimiento (M4)", value="tab-rendimiento"),
+        dcc.Tab(label="Prueba de carga (M5)", value="tab-carga"),
     ]),
     html.Div(id="contenido-tab", style={"marginTop": "20px"}),
 ])
@@ -232,6 +238,67 @@ def render_tab(tab):
             dcc.Graph(figure=fig_etl),
         ])
 
+    elif tab == "tab-carga":
+        if prueba_carga_df is None:
+            return html.Div([
+                html.P(
+                    "Todavía no se ha corrido la prueba de carga. Corre "
+                    "prueba_carga.py con el dashboard activo y guarda el resultado "
+                    "en resultados/entrega3/prueba_carga.csv.",
+                    style={"color": COLORES["alert"]},
+                )
+            ])
+
+        fig_latencia = go.Figure()
+        fig_latencia.add_trace(go.Scatter(
+            x=prueba_carga_df["n_concurrentes"], y=prueba_carga_df["latencia_media_ms"],
+            mode="lines+markers", name="Latencia media", line=dict(color=COLORES["coral"]),
+        ))
+        fig_latencia.add_trace(go.Scatter(
+            x=prueba_carga_df["n_concurrentes"], y=prueba_carga_df["latencia_p95_ms"],
+            mode="lines+markers", name="Latencia p95", line=dict(color=COLORES["morado"]),
+        ))
+        fig_latencia.update_layout(
+            title="Latencia vs. usuarios concurrentes (simulación de pico de tráfico)",
+            xaxis_title="Usuarios concurrentes", yaxis_title="Latencia (ms)",
+        )
+
+        fig_throughput = px.line(
+            prueba_carga_df, x="n_concurrentes", y="throughput_req_por_s", markers=True,
+            title="Throughput vs. usuarios concurrentes",
+            color_discrete_sequence=[COLORES["verde"]],
+        )
+        fig_throughput.update_layout(xaxis_title="Usuarios concurrentes", yaxis_title="Solicitudes/segundo")
+        fig_throughput.update_yaxes(range=[0, max(40, prueba_carga_df["throughput_req_por_s"].max() * 1.2)])
+
+        tabla = html.Table([
+            html.Thead(html.Tr([html.Th(c) for c in ["Concurrentes", "Latencia media", "Latencia p95", "Throughput", "Errores"]])),
+            html.Tbody([
+                html.Tr([
+                    html.Td(int(r["n_concurrentes"])),
+                    html.Td(f"{r['latencia_media_ms']:.0f} ms"),
+                    html.Td(f"{r['latencia_p95_ms']:.0f} ms"),
+                    html.Td(f"{r['throughput_req_por_s']:.1f} req/s"),
+                    html.Td(f"{r['tasa_error']*100:.1f}%"),
+                ]) for _, r in prueba_carga_df.iterrows()
+            ]),
+        ], style={"width": "100%", "textAlign": "left", "marginTop": "16px"})
+
+        nota = html.P(
+            "El throughput se mantiene aproximadamente constante sin importar la "
+            "concurrencia -- el cuello de botella es el GIL de Python serializando "
+            "el cómputo de cada respuesta (filtrado de datos + construcción de "
+            "gráficos), no el modelo de conexiones del servidor.",
+            style={"fontSize": "12px", "color": "#666", "marginTop": "12px"},
+        )
+
+        return html.Div([
+            dcc.Graph(figure=fig_latencia),
+            dcc.Graph(figure=fig_throughput),
+            tabla,
+            nota,
+        ])
+
 
 @app.callback(Output("tabla-recomendaciones", "children"), Input("selector-usuario", "value"))
 def actualizar_recomendaciones(visitorid):
@@ -266,4 +333,4 @@ if __name__ == "__main__":
     # puerto expuesto sea accesible desde fuera del contenedor.
     host = os.environ.get("DASH_HOST", "127.0.0.1")
     debug = os.environ.get("DASH_DEBUG", "true").lower() == "true"
-    app.run(host=host, port=8050, debug=debug)
+    app.run(host=host, port=8050, debug=debug, threaded=True)
