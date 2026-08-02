@@ -1,0 +1,22 @@
+# docker-compose.yml
+# Corre desde la carpeta Codigos/ con: docker-compose up --build
+# Dashboard disponible en: http://localhost:8050
+
+services:
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "8050:8050"
+    environment:
+      - DASH_HOST=0.0.0.0
+      - DASH_DEBUG=false
+    volumes:
+      # Los datos NO se copian a la imagen (ver Dockerfile) -- se montan
+      # como solo-lectura, en las mismas rutas relativas que espera app.py
+      # (RAIZ = carpeta del script / .. -> /app, entonces /app/datos y
+      # /app/resultados coinciden con lo que ya calcula app.py localmente).
+      - ./datos:/app/datos:ro
+      - ./resultados:/app/resultados:ro
+    restart: unless-stopped

@@ -260,4 +260,10 @@ def actualizar_recomendaciones(visitorid):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8050)
+    import os
+    # En local (VS Code) corre igual que siempre: 127.0.0.1.
+    # En Docker, docker-compose.yml define DASH_HOST=0.0.0.0 para que el
+    # puerto expuesto sea accesible desde fuera del contenedor.
+    host = os.environ.get("DASH_HOST", "127.0.0.1")
+    debug = os.environ.get("DASH_DEBUG", "true").lower() == "true"
+    app.run(host=host, port=8050, debug=debug)

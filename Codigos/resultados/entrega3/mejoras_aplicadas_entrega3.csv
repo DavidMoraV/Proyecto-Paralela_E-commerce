@@ -1,0 +1,4 @@
+mejora,etapa_afectada,impacto_medido
+Deteccion automatica de separador/decimal en ingesta,M1 - Ingesta,"Evito perder 13.0% de eventos por falsos duplicados (136,164 filas)"
+Evaluacion muestreada (1+99) en vez de catalogo completo,M3 - Evaluacion,Evaluacion de ALS/NCF tratable en minutos en vez de horas
+Indexacion vectorizada de tensores en vez de DataLoader,M3 - Entrenamiento NCF,Elimino el cuello de botella real detectado en Colab (ver Gestion de problemas)

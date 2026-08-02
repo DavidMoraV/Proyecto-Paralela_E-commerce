@@ -1,0 +1,2 @@
+n_workers,workers_con_trabajo_asignado,media_tiempo_ocupado_s,std_tiempo_ocupado_s,coef_variacion,tiempo_transferencia_total_s
+4,4,3.3058265447616577,0.38122342283256394,0.11531864048845589,0.49381566047668457

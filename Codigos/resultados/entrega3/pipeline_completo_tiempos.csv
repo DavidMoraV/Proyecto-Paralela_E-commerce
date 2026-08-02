@@ -1,0 +1,6 @@
+etapa,tiempo_s,porcentaje_del_total
+M1_ingesta_limpieza,3.45154509996064,2.5
+M2_clustering,12.049232100020163,8.8
+M3_entrenamiento,120.42525840003509,87.9
+M3_inferencia_batch,1.0319735000375658,0.8
+TOTAL,136.95800910005346,100.0

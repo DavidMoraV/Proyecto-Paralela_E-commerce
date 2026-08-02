@@ -1,0 +1,43 @@
+{
+  "als_muestreado": {
+    "usuarios_evaluados": 5000,
+    "hit_rate@10": 0.6718,
+    "map@10": 0.45350039682539683,
+    "ndcg@10": 0.5045326439274853
+  },
+  "ncf_muestreado": {
+    "usuarios_evaluados": 5000,
+    "hit_rate@10": 0.7588,
+    "map@10": 0.5927717460317461,
+    "ndcg@10": 0.6322484351645642,
+    "protocolo": "muestreado (1 positivo + 99 negativos)"
+  },
+  "entrenamiento_ncf": {
+    "tiempo_segundos": 987.5375311670001,
+    "device": "cuda",
+    "historial_perdida": [
+      0.3638538122177124,
+      0.21994797885417938,
+      0.05910038575530052,
+      0.00863463431596756,
+      0.0015308728907257318,
+      0.000337930308887735,
+      8.872758917277679e-05,
+      2.738514194788877e-05,
+      1.2052788406435866e-05,
+      6.067217782401713e-06
+    ]
+  },
+  "benchmark_gpu_vs_cpu": [
+    {
+      "dispositivo": "GPU",
+      "tiempo_por_epoca_s": 98.75375311670001,
+      "speedup_gpu": 3.97
+    },
+    {
+      "dispositivo": "CPU",
+      "tiempo_por_epoca_s": 391.9439829165,
+      "speedup_gpu": 1.0
+    }
+  ]
+}
