@@ -66,3 +66,6 @@ modelos/*.pt
 modelos/*.pth
 # Carpeta de limpieza (duplicados movidos, no se suben)
 _duplicados_para_revisar/
+
+# Archivos .zip temporales (para subir a Colab, no se versionan)
+*.zip
