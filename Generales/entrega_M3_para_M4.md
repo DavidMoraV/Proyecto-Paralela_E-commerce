@@ -1,8 +1,6 @@
-## Entrega de M3 hacia M4 — Insumos para Análisis de Rendimiento
 
-Este documento resume lo que M3 ya tiene listo y verificado, y qué necesita M4 (Computación Paralela y Análisis de Rendimiento) para construir su parte de la Entrega 2: profiling del entrenamiento ML e identificación de cuellos de botella.
 
-### 1. Resumen ejecutivo de M3
+### 1. Resumen
 
 Modelo baseline de recomendación (ALS / filtrado colaborativo con feedback implícito), entrenado y evaluado sobre el dataset completo de RetailRocket:
 
@@ -17,7 +15,7 @@ Modelo baseline de recomendación (ALS / filtrado colaborativo con feedback impl
 | MAP@10 | 0.0124 |
 | NDCG@10 | 0.0157 |
 
-### 2. Tiempos por etapa (ya medidos — punto de partida para M4)
+### 2. Tiempos por etapa (ya medidos  punto de partida para M4)
 
 | Etapa | Tiempo medido | Notas para profiling |
 |---|---|---|
@@ -53,13 +51,13 @@ for n_threads in [1, 2, 4, 8, 12]:
     # medir tiempo de modelo.entrenar(matriz_train) para cada configuración
 ```
 
-### 4. Otros experimentos de speedup/escalabilidad sugeridos para M4
+### 4. experimentos de speedup/escalabilidad sugeridos para M4
 
 - **Factors del modelo ALS** (32 / 64 / 128 / 256): medir tiempo de entrenamiento vs calidad (NDCG@10) — relación costo/beneficio de aumentar la dimensionalidad de los embeddings.
 - **Tamaño de lote en la evaluación batch** (`tam_lote`: 1,000 / 5,000 / 20,000): medir tiempo total de evaluación por configuración — trade-off entre paralelismo y overhead de coordinación, mismo patrón que ya se observó con Dask en M1 (a mayor lote, menos overhead relativo, hasta cierto punto).
 - **Iteraciones de ALS** (5 / 15 / 30): tiempo vs convergencia de las métricas de calidad — para saber si 15 iteraciones (el valor actual) es un punto razonable o si hay margen de ahorro.
 
-### 5. Artefactos disponibles para M4
+### 5. herramientas
 
 | Archivo | Contenido | Ubicación |
 |---|---|---|
