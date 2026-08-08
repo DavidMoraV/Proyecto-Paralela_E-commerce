@@ -495,4 +495,3 @@ Polars · Dask · PyArrow · Scikit-Learn · Implicit (ALS) · PyTorch (NCF) · 
 
 - El módulo `analisis_eda.py` (M2, EDA base) no se refactorizó a funciones parametrizables tan exhaustivamente como los demás módulos — ver nota de alcance en el informe de Entrega 2.
 - El entrenamiento de NCF (M3) usa un conjunto fijo de negativos por época en vez de resamplearlos (protocolo original de He et al., 2017); la pérdida de entrenamiento cercana a cero sugiere riesgo de sobreajuste — ver `m3_resultados_finales_entrega3.md` para el detalle y la solución propuesta.
-- Las mediciones de balance de carga y comunicación (M4) se hicieron sobre una sola operación (deduplicación) en un clúster local de un solo nodo; no se ha medido en un clúster distribuido real multi-nodo.
