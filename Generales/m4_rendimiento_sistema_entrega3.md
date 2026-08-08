@@ -1,4 +1,4 @@
-## M4 — Análisis de Rendimiento del Sistema Integrado (Entrega 3)
+## M4  Análisis de Rendimiento del Sistema Integrado (Entrega 3)
 
 ### Análisis de resultados
 

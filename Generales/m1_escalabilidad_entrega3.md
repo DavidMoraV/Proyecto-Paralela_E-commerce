@@ -1,4 +1,4 @@
-## M1 — Escalabilidad fuerte y débil (Entrega 3)
+## M1 Escalabilidad fuerte y débil (Entrega 3)
 
 ### Análisis de resultados
 
@@ -30,6 +30,6 @@ Esta descomposición separa el tiempo en un **componente fijo** (~0.74s, corresp
 
 ### Gestión de problemas
 
-**Problema — El pipeline no logra escalabilidad débil real.** Aunque el sistema muestra un speedup razonable en el régimen de escalabilidad fuerte (2.40x con 8 workers sobre un dataset fijo), no mantiene el tiempo de respuesta constante cuando datos y recursos crecen juntos, que es el escenario más representativo de un pico de tráfico real (p. ej. Black Friday). La causa identificada es que el overhead de coordinación de Dask (construcción y programación del grafo de tareas) escala con el número de workers involucrados, no solo con el volumen de datos —de modo que agregar más workers en proporción al crecimiento de tráfico no garantiza, con la configuración actual, que el tiempo de respuesta se mantenga estable.
+**Problema  El pipeline no logra escalabilidad débil real.** Aunque el sistema muestra un speedup razonable en el régimen de escalabilidad fuerte (2.40x con 8 workers sobre un dataset fijo), no mantiene el tiempo de respuesta constante cuando datos y recursos crecen juntos, que es el escenario más representativo de un pico de tráfico real (p. ej. Black Friday). La causa identificada es que el overhead de coordinación de Dask (construcción y programación del grafo de tareas) escala con el número de workers involucrados, no solo con el volumen de datos —de modo que agregar más workers en proporción al crecimiento de tráfico no garantiza, con la configuración actual, que el tiempo de respuesta se mantenga estable.
 
 **Implicación para el diseño del sistema.** Este hallazgo es relevante para la simulación de picos de tráfico prevista en el resto de la Entrega 3: escalar horizontalmente el número de workers de Dask no es, por sí solo, una estrategia suficiente para sostener el tiempo de respuesta bajo carga creciente. Se documenta como limitación conocida del enfoque actual, y se identifica como candidato a explorar en la etapa de escalabilidad del sistema integrado (M4): evaluar si un tamaño de partición fijo y mayor (reduciendo el número de tareas coordinadas por worker) mitiga este efecto, en línea con el hallazgo de granularidad de partición ya documentado en la Entrega 2.

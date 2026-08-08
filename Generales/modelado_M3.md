@@ -1,4 +1,4 @@
-## Modelado (M3)
+## Modelado
 
 ### Arquitectura del modelo baseline
 
@@ -41,7 +41,7 @@ Se evaluó el modelo con tres métricas estándar de sistemas de recomendación 
 
 Estos valores son el punto de partida esperado para un modelo baseline sin ajuste de hiperparámetros, evaluado contra un catálogo de más de 227,000 productos candidatos — el objetivo de esta entrega es establecer una línea base reproducible y medible, no maximizar la métrica todavía.
 
-### Integración con M2 — rendimiento por segmento de usuario
+### Integración con M2  rendimiento por segmento de usuario
 
 Aprovechando los 6 clusters de usuario ya identificados en M2, se descompuso el Hit Rate@10 por segmento:
 
@@ -66,8 +66,3 @@ Los scores absolutos generados por el modelo (usados para ordenar las recomendac
 
 **Dispersión extrema de la matriz.** Con 0.0006% de densidad, los factores latentes de usuarios/productos con pocas interacciones están débilmente restringidos por los datos. Se documenta como limitación conocida del baseline; el ajuste de `regularization` y `factors` vía búsqueda de hiperparámetros (Optuna, Entrega 3) es la vía planeada para mitigarlo.
 
-### Próximos pasos (Entrega 3)
-
-- Comparar este baseline ALS contra un modelo de embeddings/Two-Tower (PyTorch), evaluado con las mismas tres métricas sobre el mismo conjunto de test.
-- Ajuste de hiperparámetros (`factors`, `regularization`, `iterations`) con Optuna.
-- Evaluar una estrategia de respaldo (popularidad o basada en contenido) para el segmento de usuarios de una sola interacción.

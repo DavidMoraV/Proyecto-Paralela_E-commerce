@@ -1,4 +1,4 @@
-## M2 — Clustering GPU (cuML) vs CPU (Scikit-Learn): Resultados Finales (Entrega 3)
+## M2  Clustering GPU (cuML) vs CPU (Scikit-Learn): Resultados Finales
 
 ### Funcionalidad
 

@@ -1,4 +1,4 @@
-## M3 — Modelo Avanzado (NCF) vs Baseline ALS: Resultados Finales (Entrega 3)
+## M3  Modelo Avanzado (NCF) vs Baseline ALS: Resultados Finales 
 
 ### Comparación de modelos (mismo protocolo de evaluación)
 
