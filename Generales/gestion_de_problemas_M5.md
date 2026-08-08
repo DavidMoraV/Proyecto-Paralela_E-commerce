@@ -1,6 +1,6 @@
-## Gestión de problemas (M5 — Entrega 2)
+## Gestión de problemas (M5 Entrega 2)
 
-### Problema 1 — Formato de los scores del modelo (M3) ilegible en el dashboard
+### Problema 1 Formato de los scores del modelo (M3) ilegible en el dashboard
 
 **Detección:** al conectar el dashboard con `recomendaciones_muestra.csv` (salida de M3), la tabla de recomendaciones mostraba `0,0000` en las 10 filas, y el eje del gráfico usaba una notación con sufijo `n` poco clara para el usuario final.
 
@@ -8,15 +8,15 @@
 
 **Solución aplicada:** se cambió el formato de la tabla a notación científica explícita (`.4e`) y se fijó el formato del eje (`yaxis_tickformat=".2e"`) en vez de dejar el autoformato de Plotly. Se agregó además una nota aclaratoria visible en el dashboard: el score de ALS es un producto punto, no una probabilidad, y lo relevante es el orden relativo entre recomendaciones, no la magnitud absoluta.
 
-### Problema 2 — El cluster más activo (M2) opacaba visualmente a los demás en el radar chart
+### Problema 2  El cluster más activo (M2) opacaba visualmente a los demás en el radar chart
 
 **Detección:** el radar de perfil de clusters mostraba una sola forma dominante (Cluster 2) y el resto de los clusters aparecían aplastados contra el centro, ilegibles.
 
 **Causa raíz:** el Cluster 2 no es superior en una sola variable, sino en las 5 variables de perfil a la vez, con valores 10-12 veces más grandes que el segundo lugar (ej. 121.79 interacciones promedio vs 10.20 del siguiente cluster). Una normalización min-max estándar sobre las 6 series a la vez no resuelve el problema: el cluster outlier sigue llegando a 1.0 en los 5 ejes y el resto queda igual de comprimido, solo que en otra escala.
 
-**Solución aplicada:** se separó la visualización en dos gráficos — uno con los 5 clusters restantes normalizados entre sí (donde sí se distinguen sus diferencias relativas), y otro aparte solo para el Cluster 2 en su propia escala — más una tabla de valores absolutos para no perder la comparación cuantitativa real entre todos los segmentos.
+**Solución aplicada:** se separó la visualización en dos gráficos — uno con los 5 clusters restantes normalizados entre sí, y otro aparte solo para el Cluster 2 en su propia escala — más una tabla de valores absolutos para no perder la comparación cuantitativa real entre todos los segmentos.
 
-### Problema 3 — Incompatibilidades de rutas al reorganizar la estructura de carpetas
+### Problema 3 Incompatibilidades de rutas al reorganizar la estructura de carpetas
 
 **Detección:** al migrar el proyecto de una estructura de archivos sueltos a la organización que pide la rúbrica (`dashboard/`, `src/`, `notebooks/`, `datos/`, `resultados/`), cada notebook y script falló con una combinación de `ModuleNotFoundError` y `FileNotFoundError` al volver a ejecutarse.
 

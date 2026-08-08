@@ -1,4 +1,4 @@
-## M1 — Comparativa Final: Pandas vs Polars vs Dask vs cuDF (Entrega 3)
+## M1  Comparativa Final: Pandas vs Polars vs Dask vs cuDF (Entrega 3)
 
 ### Resultados
 
@@ -11,7 +11,6 @@ Se midió el tiempo de carga, limpieza y transformación de `events.csv` complet
 | Dask | 1.59 s | 2.51 s | 0.64 s | 4.75 s | 0.80x | 4 workers | 0.200 |
 | **cuDF (GPU)** | 0.07 s | 0.03 s | 0.05 s | **0.15 s** | **25.55x** | 1 GPU | 25.55 |
 
-*Tabla ya corregida — ver "Gestión de problemas" para el detalle de la medición original (defectuosa) y su corrección.*
 
 ### Nota metodológica: el desglose por etapa de Dask no refleja dónde ocurre el costo real
 
@@ -27,7 +26,7 @@ A diferencia de Dask, la implementación de Polars sí materializa (`.collect()`
 
 **Polars sigue siendo una opción sólida y de bajo costo operativo**: 2.67x de speedup sin requerir GPU ni configuración de clúster, la opción más simple de desplegar de las cuatro.
 
-### Recomendación justificada
+### Recomendación
 
 | Escenario | Herramienta recomendada | Justificación |
 |---|---|---|
@@ -37,7 +36,7 @@ A diferencia de Dask, la implementación de Polars sí materializa (`.collect()`
 
 Para el pipeline de este proyecto específicamente, dado que ya se cuenta con acceso a GPU a través de Colab para el entrenamiento del modelo (M3), extender su uso a la etapa de ETL con cuDF es la recomendación técnica más defendible: la ganancia de rendimiento (25.55x) es sustancialmente mayor que cualquier otra alternativa evaluada, y la infraestructura GPU ya es parte del flujo de trabajo del proyecto.
 
-### Gestión de problemas: medición por etapa de Dask corregida, con evidencia de antes/después
+### Gestión de problemas: medición por etapa de Dask corregida, de antes/después
 
 **Detección.** En la primera corrida, el desglose por etapa de Dask mostraba `carga: 0.005s`, `limpieza: 0.009s`, `transformación: 4.66s` — una distribución no creíble, con el 99.7% del tiempo concentrado en la última etapa.
 
@@ -54,4 +53,4 @@ Para el pipeline de este proyecto específicamente, dado que ya se cuenta con ac
 | Transformación | 4.66 s | 0.64 s |
 | **Total** | 4.68 s | 4.75 s |
 
-El tiempo **total** apenas cambió (4.68s → 4.75s, dentro del margen de variabilidad esperado), confirmando que la comparación de totales entre herramientas ya era válida desde la primera corrida — lo que estaba mal era exclusivamente la atribución del tiempo entre etapas. Con la corrección, la etapa dominante para Dask resulta ser **limpieza** (2.51s, 53% del total), consistente con el hallazgo ya documentado en la Entrega 2 de que la deduplicación es la operación más costosa del pipeline de Dask, al requerir coordinación (shuffle) entre particiones — la corrección no solo arregla un bug, sino que además refuerza con nueva evidencia una conclusión ya establecida en el proyecto.
+El tiempo **total** apenas cambió (4.68s → 4.75s, dentro del margen de variabilidad esperado), confirmando que la comparación de totales entre herramientas ya era válida desde la primera corrida — lo que estaba mal era exclusivamente la atribución del tiempo entre etapas. Con la corrección, la etapa dominante para Dask resulta ser **limpieza** (2.51s, 53% del total), consistente con el hallazgo ya documentado en la Entrega 2 de que la deduplicación es la operación más costosa del pipeline de Dask, al requerir coordinación (shuffle) entre particiones la corrección no solo arregla un bug, sino que además refuerza con nueva evidencia una conclusión ya establecida en el proyecto.
