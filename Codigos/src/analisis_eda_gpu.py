@@ -1,17 +1,4 @@
-"""
-analisis_eda_gpu.py
-Módulo 2 (M2) — Clustering GPU (Entrega 3)
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Extiende el análisis exploratorio de M2 (Entrega 2, CPU/Scikit-Learn) con
-una versión acelerada por GPU usando RAPIDS cuML, y compara ambas para
-identificar a partir de qué volumen de datos la GPU compensa su overhead
-de transferencia frente a CPU.
-
-Archivo separado de `analisis_eda.py` a propósito: así el módulo original
-(ya usado por M3, M4 y el dashboard) no se modifica ni se arriesga a
-romperse por una dependencia (cuML) que solo existe en el entorno de Colab.
-"""
 from __future__ import annotations
 
 import logging
@@ -30,9 +17,9 @@ COLUMNAS_FEATURES = [
 ]
 
 
-# ---------------------------------------------------------------------------
+
 # 1. Clustering en GPU (cuML) -- misma interfaz que segmentar_usuarios (CPU)
-# ---------------------------------------------------------------------------
+
 def segmentar_usuarios_gpu(
     usuarios_features: pl.DataFrame,
     n_clusters: int = 6,
@@ -99,9 +86,9 @@ def segmentar_usuarios_cpu_referencia(
     return resultado, tiempo
 
 
-# ---------------------------------------------------------------------------
+
 # 2. Benchmark GPU vs CPU a distintos tamaños de dataset
-# ---------------------------------------------------------------------------
+
 def _generar_features_sinteticas(n_filas: int, n_columnas: int = 6, semilla: int = 42) -> pd.DataFrame:
     """Genera una tabla de features sintética con la misma forma que las
     features reales de usuario (positivas, distribución long-tail similar a
@@ -138,14 +125,14 @@ def benchmark_kmeans_gpu_vs_cpu(
         logger.info("Generando dataset sintetico de %s filas", f"{n:,}")
         df_pd = _generar_features_sinteticas(n)
 
-        # --- CPU ---
+        #  CPU 
         tiempos_cpu = []
         for _ in range(n_repeticiones):
             t0 = time.perf_counter()
             KMeansCPU(n_clusters=n_clusters, n_init=3, random_state=42).fit_predict(df_pd)
             tiempos_cpu.append(time.perf_counter() - t0)
 
-        # --- GPU ---
+        #  GPU 
         df_gpu = cudf.from_pandas(df_pd)
         tiempos_gpu = []
         for _ in range(n_repeticiones):
@@ -169,9 +156,9 @@ def benchmark_kmeans_gpu_vs_cpu(
     return pd.DataFrame(filas)
 
 
-# ---------------------------------------------------------------------------
+
 # 3. Reducción dimensional (UMAP, GPU) para visualización 2D
-# ---------------------------------------------------------------------------
+
 def reducir_umap_gpu(usuarios_features: pl.DataFrame, columnas: list[str] | None = None,
                       n_muestra: int | None = 50_000, semilla: int = 42) -> pd.DataFrame:
     """Reduce las features de usuario a 2 dimensiones con UMAP (GPU, cuML),

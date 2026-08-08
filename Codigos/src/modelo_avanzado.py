@@ -1,14 +1,4 @@
-"""
-modelo_avanzado.py
-Módulo 3 (M3) — Modelo avanzado de recomendación (Entrega 3)
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Implementa NeuMF (Neural Matrix Factorization / NCF), combinando un camino
-de factorización matricial generalizada (GMF) con un perceptrón multicapa
-(MLP), siguiendo la arquitectura de He et al. (2017), "Neural Collaborative
-Filtering". Diseñado para entrenarse con GPU (Google Colab); el código
-también corre en CPU (más lento) para validación de lógica.
-"""
 from __future__ import annotations
 
 import logging
@@ -24,9 +14,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("M3_modelo_avanzado")
 
 
-# ---------------------------------------------------------------------------
+
 # 1. Arquitectura NeuMF (GMF + MLP)
-# ---------------------------------------------------------------------------
+
 class NeuMF(nn.Module):
     """Neural Matrix Factorization (He et al., 2017).
 
@@ -82,9 +72,8 @@ class NeuMF(nn.Module):
         return torch.sigmoid(self.capa_final(combinado)).squeeze(-1)
 
 
-# ---------------------------------------------------------------------------
 # 2. Dataset con muestreo negativo
-# ---------------------------------------------------------------------------
+
 class InteraccionesImplicitasDataset(Dataset):
     """Para cada interacción positiva (usuario, item) en train, genera
     `n_negativos` pares negativos por época (items con los que el usuario
@@ -127,9 +116,9 @@ class InteraccionesImplicitasDataset(Dataset):
         return self.usuarios[idx], self.items[idx], self.labels[idx]
 
 
-# ---------------------------------------------------------------------------
+
 # 3. Entrenamiento
-# ---------------------------------------------------------------------------
+
 def entrenar_ncf(
     modelo: NeuMF,
     dataset: InteraccionesImplicitasDataset,
@@ -195,9 +184,9 @@ def entrenar_ncf(
     return {"historial_perdida": historial, "tiempo_segundos": tiempo_total, "device": device}
 
 
-# ---------------------------------------------------------------------------
+
 # 4. Evaluación muestreada (protocolo estándar He et al. 2017: 1 positivo + N negativos)
-# ---------------------------------------------------------------------------
+
 def evaluar_ncf_muestreado(
     modelo: NeuMF,
     test_pares: np.ndarray,
@@ -255,9 +244,8 @@ def evaluar_ncf_muestreado(
     }
 
 
-# ---------------------------------------------------------------------------
 # 5. Exportación del modelo (ONNX)
-# ---------------------------------------------------------------------------
+
 def exportar_onnx(modelo: NeuMF, ruta_salida: str, device: str = "cpu") -> None:
     """Exporta el modelo entrenado a formato ONNX, para inferencia portable
     fuera de PyTorch (requisito de Entrega 3: 'modelo exportado en formato

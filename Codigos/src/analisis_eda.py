@@ -1,14 +1,4 @@
-"""
-analisis_eda.py
-Módulo 2 (M2) — Análisis Exploratorio y Estadístico
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Responsable: Ana María Ramírez (M2, Entrega 2)
-
-Refactorización a funciones reutilizables del notebook original de EDA y
-segmentación de usuarios, para que M3 pueda importar directamente la
-construcción de features y la carga de segmentos sin repetir código.
-"""
 from __future__ import annotations
 
 import logging

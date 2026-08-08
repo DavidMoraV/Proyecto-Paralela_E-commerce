@@ -1,14 +1,4 @@
-"""
-analisis_sistema.py
-Módulo 4 (M4) — Análisis de Rendimiento del Sistema Integrado (Entrega 3)
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-A diferencia de la Entrega 2 (donde cada etapa se benchmarkeó por separado),
-este módulo mide el sistema COMPLETO de punta a punta: ETL -> clustering ->
-entrenamiento -> inferencia, además de balance de carga y costos de
-comunicación entre workers de Dask (métricas de sistemas distribuidos que
-no se habían cuantificado hasta ahora).
-"""
 from __future__ import annotations
 
 import logging
@@ -22,9 +12,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("M4_analisis_sistema")
 
 
-# ---------------------------------------------------------------------------
+
 # 1. Pipeline completo, de punta a punta, con tiempo por etapa
-# ---------------------------------------------------------------------------
+
 def ejecutar_pipeline_completo(
     ruta_eventos: Path,
     ruta_category_tree: Path,
@@ -49,21 +39,21 @@ def ejecutar_pipeline_completo(
 
     tiempos = {}
 
-    # --- M1: Ingesta + limpieza ---
+    #  M1: Ingesta + limpieza 
     t0 = time.perf_counter()
     eventos = limpiar_eventos(ingestar_eventos(ruta_eventos))
     eventos = transformar_eventos(eventos).collect()
     tiempos["M1_ingesta_limpieza"] = time.perf_counter() - t0
     logger.info("M1 (ingesta+limpieza): %.2f s -- %s filas", tiempos["M1_ingesta_limpieza"], f"{eventos.height:,}")
 
-    # --- M2: Clustering ---
+    #  M2: Clustering 
     t0 = time.perf_counter()
     features = construir_features_usuario(eventos.lazy())
     segmentos = segmentar_usuarios(features, n_clusters=n_clusters)
     tiempos["M2_clustering"] = time.perf_counter() - t0
     logger.info("M2 (clustering): %.2f s -- %s usuarios", tiempos["M2_clustering"], f"{segmentos.height:,}")
 
-    # --- M3: Entrenamiento ---
+    #  M3: Entrenamiento 
     t0 = time.perf_counter()
     train, test = dividir_train_test(eventos)
     mi = construir_matriz_interacciones(train)
@@ -72,7 +62,7 @@ def ejecutar_pipeline_completo(
     tiempos["M3_entrenamiento"] = time.perf_counter() - t0
     logger.info("M3 (entrenamiento): %.2f s", tiempos["M3_entrenamiento"])
 
-    # --- M3: Inferencia (batch de recomendaciones, escenario de producción) ---
+    # M3: Inferencia (batch de recomendaciones, escenario de producción)
     t0 = time.perf_counter()
     usuarios_disponibles = list(mi.visitorid_a_idx.values())
     muestra = np.array(usuarios_disponibles[:min(n_usuarios_inferencia, len(usuarios_disponibles))])
@@ -84,9 +74,9 @@ def ejecutar_pipeline_completo(
     return tiempos
 
 
-# ---------------------------------------------------------------------------
+
 # 2. Latencia de inferencia según tamaño de lote (para "prueba de carga")
-# ---------------------------------------------------------------------------
+
 def benchmark_latencia_inferencia(
     modelo, matriz_train, mi, tamanos_lote: list[int] | None = None, n_repeticiones: int = 5,
 ) -> pd.DataFrame:
@@ -120,9 +110,9 @@ def benchmark_latencia_inferencia(
     return pd.DataFrame(filas)
 
 
-# ---------------------------------------------------------------------------
+
 # 3. Balance de carga y costos de comunicación (Dask distributed)
-# ---------------------------------------------------------------------------
+
 def medir_balance_y_comunicacion(ruta_eventos: Path, n_workers: int = 4) -> dict:
     """Mide, sobre un clúster local de Dask distributed, cómo se reparte el
     trabajo entre workers (balance de carga) y cuánto tiempo se gasta

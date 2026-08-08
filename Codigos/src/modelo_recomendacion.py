@@ -1,16 +1,4 @@
-"""
-modelo_recomendacion.py
-Módulo 3 (M3) — Modelo de Machine Learning y Recomendación
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Entrega 2 — Modelo baseline (ALS / filtrado colaborativo con feedback implícito)
-
-Este módulo construye la matriz de interacciones usuario-producto a partir
-de los eventos limpios de M1, entrena un modelo baseline ALS (vía la
-librería Implicit, paralelizado multi-hilo) y evalúa la calidad de las
-recomendaciones con métricas estándar de ranking: Hit Rate@K, MAP@K y
-NDCG@K.
-"""
 from __future__ import annotations
 
 import logging
@@ -27,9 +15,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("M3_modelo_recomendacion")
 
 
-# ---------------------------------------------------------------------------
+
 # 1. Construcción de la matriz de interacciones
-# ---------------------------------------------------------------------------
+
 @dataclass
 class MatrizInteracciones:
     """Contenedor con la matriz dispersa usuario-producto y los mapeos de ID
@@ -85,9 +73,8 @@ def construir_matriz_interacciones(eventos: pl.DataFrame) -> MatrizInteracciones
     )
 
 
-# ---------------------------------------------------------------------------
 # 2. División train/test (leave-one-out por usuario, basada en tiempo)
-# ---------------------------------------------------------------------------
+
 def dividir_train_test(eventos: pl.DataFrame, min_interacciones: int = 2) -> tuple[pl.DataFrame, pl.DataFrame]:
     """Separa, para cada usuario con al menos `min_interacciones` eventos, su
     interacción MÁS RECIENTE como test y el resto como train. Los usuarios con
@@ -120,17 +107,9 @@ def dividir_train_test(eventos: pl.DataFrame, min_interacciones: int = 2) -> tup
     return train, test
 
 
-# ---------------------------------------------------------------------------
 # 3. Modelo baseline: ALS
-# ---------------------------------------------------------------------------
-class ModeloALS:
-    """Envoltorio del modelo ALS (Alternating Least Squares) de la librería
-    Implicit, para filtrado colaborativo con feedback implícito.
 
-    Se usa como modelo baseline (Objetivo 2 del proyecto): rápido de
-    entrenar, no requiere GPU, y sirve de referencia para comparar contra
-    modelos más avanzados (embeddings/Two-Tower) en la Entrega 3.
-    """
+class ModeloALS:
 
     def __init__(self, factors: int = 64, regularization: float = 0.01, iterations: int = 15):
         self.modelo = AlternatingLeastSquares(
@@ -173,9 +152,8 @@ class ModeloALS:
         return list(ids)
 
 
-# ---------------------------------------------------------------------------
 # 4. Métricas de evaluación (ranking)
-# ---------------------------------------------------------------------------
+
 def exportar_recomendaciones_muestra(
     modelo: ModeloALS,
     matriz_train: csr_matrix,
@@ -225,13 +203,6 @@ def evaluar_modelo(
     k: int = 10,
     max_usuarios: int | None = None,
 ) -> dict[str, float]:
-    """Evalúa Hit Rate@K, MAP@K y NDCG@K sobre el conjunto de test
-    (leave-one-out: un producto relevante por usuario).
-
-    NOTA: esta versión evalúa usuario por usuario (loop de Python) y es útil
-    para depurar con muestras pequeñas. Para evaluar el dataset completo,
-    usar `evaluar_modelo_batch`, que es órdenes de magnitud más rápida.
-    """
     logger.info("Evaluando modelo con K=%d", k)
 
     filas_test = test.select(["visitorid", "itemid"]).to_numpy()

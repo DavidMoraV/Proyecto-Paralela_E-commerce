@@ -1,21 +1,4 @@
-"""
-benchmarks.py
-Módulo 4 (M4) — Computación Paralela y Análisis de Rendimiento
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Responsable: HPC Engineer (M4, Entrega 2)
-
-Scripts de benchmarking reutilizables para medir speedup y eficiencia de las
-etapas del pipeline (ETL de M1, clustering de M2, entrenamiento de M3), y
-para perfilar el entrenamiento del modelo e identificar cuellos de botella.
-
-Protocolo de medición (ver "Gestión de problemas" en el informe):
-- Cada configuración se corre con 1 repetición de calentamiento (warm-up),
-  descartada, seguida de N repeticiones que sí se promedian.
-- Se reporta media, desviación estándar, mínimo y máximo — no solo el
-  promedio — para que la variabilidad entre corridas quede documentada
-  en vez de oculta.
-"""
 from __future__ import annotations
 
 import cProfile
@@ -32,9 +15,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("M4_benchmarks")
 
 
-# ---------------------------------------------------------------------------
+
 # 1. Protocolo de medición: warm-up + repeticiones
-# ---------------------------------------------------------------------------
+
 @dataclass
 class ResultadoMedicion:
     """Resultado de medir una función repetidamente, con warm-up descartado."""
@@ -252,9 +235,9 @@ def benchmark_etl_escalabilidad_debil(
     return df
 
 
-# ---------------------------------------------------------------------------
+
 # 2. Profiling del entrenamiento (identificación de cuellos de botella)
-# ---------------------------------------------------------------------------
+
 def perfilar_funcion(func, *args, top_n: int = 15, **kwargs) -> tuple[object, pd.DataFrame]:
     """Corre `func(*args, **kwargs)` bajo cProfile y devuelve (resultado, tabla
     de las top_n funciones por tiempo acumulado), para identificar cuellos de
@@ -285,9 +268,9 @@ def perfilar_funcion(func, *args, top_n: int = 15, **kwargs) -> tuple[object, pd
     return resultado, tabla.reset_index(drop=True)
 
 
-# ---------------------------------------------------------------------------
+
 # 3. Guardado de resultados
-# ---------------------------------------------------------------------------
+
 def benchmark_clustering_threads(
     X_scaled,
     lista_hilos: list[int] | None = None,

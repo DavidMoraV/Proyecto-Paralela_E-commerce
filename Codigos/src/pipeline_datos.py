@@ -1,13 +1,4 @@
-"""
-pipeline_datos.py
-Módulo 1 (M1) — Ingeniería de Datos y Pipeline de Ingestión
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Responsable: David Mora (M1, Entrega 2)
-
-Pipeline ETL con Polars (multinúcleo) + Dask (particionado distribuido).
-Detecta y corrige automáticamente archivos reformateados por Excel.
-"""
 from __future__ import annotations
 
 import logging
