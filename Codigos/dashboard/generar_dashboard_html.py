@@ -1,13 +1,4 @@
-"""
-generar_dashboard_html.py
-Módulo 5 (M5) — Genera un dashboard HTML estático, autocontenido, a partir
-de los resultados de M1-M4. No requiere servidor: se abre directo en el
-navegador o se usa para tomar capturas para el informe.
 
-Uso:
-    python generar_dashboard_html.py
-Genera: dashboard.html
-"""
 from pathlib import Path
 
 import pandas as pd
@@ -15,17 +6,15 @@ import polars as pl
 import plotly.graph_objects as go
 import plotly.io as pio
 
-# ---------------------------------------------------------------------------
 # Rutas
-# ---------------------------------------------------------------------------
+
 RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_PROCESSED = RAIZ / "datos"
 CARPETA_RESULTADOS = RAIZ / "resultados"
 SALIDA = Path(__file__).resolve().parent / "dashboard.html"
 
-# ---------------------------------------------------------------------------
 # Paleta / tokens de diseño
-# ---------------------------------------------------------------------------
+
 TOKENS = {
     "bg": "#0E1518",
     "surface": "#152024",
@@ -63,9 +52,9 @@ def fig_to_div(fig, div_id):
     return pio.to_html(fig, include_plotlyjs=False, full_html=False, div_id=div_id, config={"displaylogo": False})
 
 
-# ---------------------------------------------------------------------------
+
 # Carga de datos
-# ---------------------------------------------------------------------------
+
 eventos = pl.read_parquet(CARPETA_PROCESSED / "eventos_limpios.parquet")
 segmentos = pl.read_parquet(CARPETA_PROCESSED / "user_segments.parquet")
 recomendaciones = pd.read_csv(CARPETA_RESULTADOS / "recomendaciones_muestra.csv")
@@ -102,9 +91,9 @@ perfil_clusters = (
 usuario_demo = int(recomendaciones["visitorid"].iloc[0])
 top_rec_demo = recomendaciones[recomendaciones["visitorid"] == usuario_demo].sort_values("rank")
 
-# ---------------------------------------------------------------------------
+
 # Figuras
-# ---------------------------------------------------------------------------
+
 fig_cluster_dist = go.Figure(go.Bar(
     x=cluster_size["nombre"], y=cluster_size["usuarios"], marker_color=TOKENS["signal"],
     text=cluster_size["usuarios"], texttemplate="%{text:,}", textposition="outside",
@@ -163,9 +152,9 @@ fig_etl_speedup.add_trace(go.Scatter(x=speedup_etl["workers"], y=speedup_etl["wo
                                       name="Speedup ideal", line=dict(color=TOKENS["text_muted"], dash="dash")))
 fig_etl_speedup.update_layout(title="Speedup del ETL (M1) vs workers", xaxis_title="Workers", yaxis_title="Speedup")
 
-# ---------------------------------------------------------------------------
+
 # Ensamblar HTML
-# ---------------------------------------------------------------------------
+
 def tarjeta_kpi(valor, etiqueta):
     return f"""<div class="kpi"><div class="kpi-valor">{valor}</div><div class="kpi-etiqueta">{etiqueta}</div></div>"""
 

@@ -1,17 +1,4 @@
-"""
-prueba_carga.py
-Módulo 5 (M5) — Prueba de carga del dashboard (Entrega 3)
-Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Simula tráfico concurrente contra el dashboard (Dash), variando el número
-de "usuarios" simultáneos hasta un escenario de pico de tráfico (simulación
-tipo Black Friday), midiendo latencia y tasa de error -- no throughput de
-cómputo interno (eso ya se midió en M4), sino la experiencia real de un
-usuario pegándole al dashboard por HTTP.
-
-Requiere que el dashboard ya esté corriendo (local: `python app.py`, o
-Docker: `docker-compose up`) antes de correr este script.
-"""
 from __future__ import annotations
 
 import logging
@@ -30,9 +17,9 @@ logger = logging.getLogger("M5_prueba_carga")
 ENDPOINT = "/_dash-update-component"
 
 
-# ---------------------------------------------------------------------------
+
 # Construcción de payloads (mismo formato que usa el cliente JS de Dash)
-# ---------------------------------------------------------------------------
+
 def payload_cambiar_tab(valor_tab: str) -> dict:
     return {
         "output": "contenido-tab.children",
@@ -51,9 +38,9 @@ def payload_seleccionar_usuario(visitorid: int) -> dict:
     }
 
 
-# ---------------------------------------------------------------------------
+
 # Ejecución de una sola solicitud (una "visita" de un usuario)
-# ---------------------------------------------------------------------------
+
 def _una_solicitud(url_base: str, payload: dict, timeout: float = 30.0) -> dict:
     t0 = time.perf_counter()
     try:
@@ -65,10 +52,10 @@ def _una_solicitud(url_base: str, payload: dict, timeout: float = 30.0) -> dict:
         return {"latencia_s": latencia, "status": None, "error": True, "excepcion": str(e)}
 
 
-# ---------------------------------------------------------------------------
+
 # Prueba de carga: N usuarios concurrentes, cada uno con una solicitud "real"
 # (usuario aleatorio distinto, simulando que no se puede cachear la respuesta)
-# ---------------------------------------------------------------------------
+
 def prueba_carga_recomendaciones(
     url_base: str,
     usuarios_disponibles: list[int],

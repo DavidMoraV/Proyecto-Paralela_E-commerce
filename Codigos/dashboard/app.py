@@ -3,8 +3,6 @@ app.py
 Módulo 5 (M5) — Dashboard, Visualización e Integración Final
 Sistema de Recomendación Paralelo para E-Commerce — RetailRocket Dataset
 
-Entrega 2 — Dashboard funcional conectado a los resultados de M1, M2, M3 y M4.
-
 Corre con: python app.py
 Abre en el navegador: http://127.0.0.1:8050
 """
@@ -17,16 +15,16 @@ import plotly.graph_objects as go
 import polars as pl
 import pandas as pd
 
-# ---------------------------------------------------------------------------
+
 # Rutas (ajustar si la estructura de carpetas es distinta)
-# ---------------------------------------------------------------------------
+
 RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_PROCESSED = RAIZ / "datos"
 CARPETA_RESULTADOS = RAIZ / "resultados"
 
-# ---------------------------------------------------------------------------
+
 # Carga de datos (una sola vez, al iniciar la app)
-# ---------------------------------------------------------------------------
+
 eventos = pl.read_parquet(CARPETA_PROCESSED / "eventos_limpios.parquet")
 segmentos = pl.read_parquet(CARPETA_PROCESSED / "user_segments.parquet")
 recomendaciones = pd.read_csv(CARPETA_RESULTADOS / "recomendaciones_muestra.csv")
@@ -48,9 +46,9 @@ NOMBRES_CLUSTER = {
     5: "Cluster 5 — Actividad intermedia",
 }
 
-# ---------------------------------------------------------------------------
+
 # Precómputo de agregados livianos para los gráficos (evita recalcular en cada callback)
-# ---------------------------------------------------------------------------
+
 eventos_por_tipo = (
     eventos.group_by("event").agg(pl.len().alias("cantidad")).sort("cantidad", descending=True).to_pandas()
 )
@@ -83,9 +81,9 @@ perfil_clusters = (
 
 usuarios_con_recomendaciones = sorted(recomendaciones["visitorid"].unique().tolist())
 
-# ---------------------------------------------------------------------------
+
 # App
-# ---------------------------------------------------------------------------
+
 app = dash.Dash(__name__)
 app.title = "Sistema de Recomendación — RetailRocket"
 
@@ -122,9 +120,9 @@ app.layout = html.Div([
 ])
 
 
-# ---------------------------------------------------------------------------
+
 # Callback: cambia el contenido según la pestaña activa
-# ---------------------------------------------------------------------------
+
 @app.callback(Output("contenido-tab", "children"), Input("tabs", "value"))
 def render_tab(tab):
     if tab == "tab-usuarios":
